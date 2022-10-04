@@ -39,5 +39,20 @@ func V2_1_0(db *sqlx.DB, fs stuffbin.FileSystem, ko *koanf.Koanf) error {
 		return err
 	}
 
+	if _, err := db.Exec(`
+	DO $$
+	BEGIN
+		IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'template_type') THEN
+			CREATE TYPE template_type AS ENUM ('html', 'mjml');
+		END IF;
+	END$$;
+
+	ALTER TYPE content_type ADD VALUE IF NOT EXISTS 'mjml';
+
+	ALTER TABLE templates ADD COLUMN IF NOT EXISTS type template_type NOT NULL DEFAULT 'html';
+	`); err != nil {
+		return err
+	}
+
 	return nil
 }

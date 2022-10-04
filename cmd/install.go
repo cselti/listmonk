@@ -119,11 +119,29 @@ func install(lastVer string, db *sqlx.DB, fs stuffbin.FileSystem, prompt, idempo
 	if err := q.CreateTemplate.Get(&tplID,
 		"Default template",
 		string(tplBody.ReadBytes()),
+		"html",
 	); err != nil {
 		lo.Fatalf("error creating default template: %v", err)
 	}
 	if _, err := q.SetDefaultTemplate.Exec(tplID); err != nil {
 		lo.Fatalf("error setting default template: %v", err)
+	}
+
+	// Default MJML template.
+	mjmlBody, err := fs.Get("/static/email-templates/default.mjml.tpl")
+	if err != nil {
+		lo.Fatalf("error reading default MJML e-mail template: %v", err)
+	}
+
+	if err := q.CreateTemplate.Get(&tplID,
+		"Default MJML template",
+		string(mjmlBody.ReadBytes()),
+		"mjml",
+	); err != nil {
+		lo.Fatalf("error creating default MJML template: %v", err)
+	}
+	if _, err := q.SetDefaultTemplate.Exec(tplID); err != nil {
+		lo.Fatalf("error setting default MJML template: %v", err)
 	}
 
 	// Sample campaign.

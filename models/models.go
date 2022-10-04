@@ -44,6 +44,7 @@ const (
 	CampaignTypeOptin           = "optin"
 	CampaignContentTypeRichtext = "richtext"
 	CampaignContentTypeHTML     = "html"
+	CampaignContentTypeMJML     = "mjml"
 	CampaignContentTypeMarkdown = "markdown"
 	CampaignContentTypePlain    = "plain"
 
@@ -69,8 +70,19 @@ const (
 	EmailHeaderSubscriberUUID = "X-Listmonk-Subscriber"
 	EmailHeaderCampaignUUID   = "X-Listmonk-Campaign"
 
+	// Standard e-mail headers.
+	EmailHeaderDate        = "Date"
+	EmailHeaderFrom        = "From"
+	EmailHeaderSubject     = "Subject"
+	EmailHeaderMessageId   = "Message-Id"
+	EmailHeaderDeliveredTo = "Delivered-To"
+	EmailHeaderReceived    = "Received"
+
 	BounceTypeHard = "hard"
 	BounceTypeSoft = "soft"
+
+	TemplateTypeHTML = "html"
+	TemplateTypeMJML = "mjml"
 )
 
 // Headers represents an array of string maps used to represent SMTP, HTTP headers etc.
@@ -207,8 +219,9 @@ type Campaign struct {
 	TemplateID  int            `db:"template_id" json:"template_id"`
 	Messenger   string         `db:"messenger" json:"messenger"`
 
-	// TemplateBody is joined in from templates by the next-campaigns query.
+	// TemplateBody and TemplateType are joined in from templates by the next-campaigns query.
 	TemplateBody string             `db:"template_body" json:"-"`
+	TemplateType string             `db:"template_type" json:"-"`
 	Tpl          *template.Template `json:"-"`
 	SubjectTpl   *template.Template `json:"-"`
 	AltBodyTpl   *template.Template `json:"-"`
@@ -246,6 +259,7 @@ type Template struct {
 
 	Name      string `db:"name" json:"name"`
 	Body      string `db:"body" json:"body,omitempty"`
+	Type      string `db:"type" json:"type"`
 	IsDefault bool   `db:"is_default" json:"is_default"`
 }
 

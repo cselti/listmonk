@@ -1,5 +1,6 @@
 FROM alpine:latest
-RUN apk --no-cache add ca-certificates tzdata
+RUN apk --no-cache add ca-certificates nodejs npm tzdata
+RUN npm install -g mjml
 WORKDIR /listmonk
 COPY listmonk .
 COPY config.toml.sample config.toml
